@@ -11,7 +11,8 @@ def download(file_name_and_url):
         with requests.get(url, stream=True) as r:
             r.raise_for_status()
             with open(file_name, 'wb') as f:
-                shutil.copyfileobj(r.raw, f)
+                for chunk in r.iter_content(chunk_size=16392):
+                    f.write(chunk)
         print("finish downloading {}".format(file_name))
     except Exception as e:
         print("error downloading {}: {}".format(file_name, e))
