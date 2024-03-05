@@ -1,5 +1,5 @@
-#ifndef MODEL_GEN_MK2_INCLUDE_TRIPENGINE_H_
-#define MODEL_GEN_MK2_INCLUDE_TRIPENGINE_H_
+#ifndef INCLUDE_TRIPENGINE_H_
+#define INCLUDE_TRIPENGINE_H_
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -7,6 +7,7 @@
 #include <sstream>
 #include <string>
 #include <string_view>
+#include <optional>
 #include "MapEngine.h"
 #include "csv.h"
 #include "utils.h"
@@ -110,4 +111,4 @@ struct TripEngine {
       std::sort(data.begin(), data.end(), [](const Trip &a, const Trip &b) { return a.tick < b.tick; });
     }
 };
-#endif // MODEL_GEN_MK2_INCLUDE_TRIPENGINE_H_
+#endif // INCLUDE_TRIPENGINE_H_

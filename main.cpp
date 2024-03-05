@@ -2,7 +2,8 @@
 #include "MapEngine.h"
 #include "MatchingEngine.h"
 #include "TripEngine.h"
-int main() {
+int main(int argc,char ** argv) {
+  if(argc < 5) return -1;
 #pragma omp parallel default(none)
   {
 #pragma omp single
@@ -11,17 +12,17 @@ int main() {
       std::unique_ptr<TripEngine> te{};
 #pragma omp task shared(me) default(none)
       {
-        me = std::make_unique<MapEngine>("../data/census_tract_2010/geo_export_e2913d18-a7cf-44d8-b59d-b72924c4cf29.shp",
-                                         "../data/community_area/geo_export_b57457bd-82f6-4c7c-beb0-3225ef658b15.shp",
-                                         "../data/Chicago.osm.pbf");
+        me = std::make_unique<MapEngine>(argv[1],
+                                         argv[2],
+                                         argv[3]);
       }
 #pragma omp task shared(te) default(none)
-      { te = std::make_unique<TripEngine>("../data/taxi_data.csv"); }
+      { te = std::make_unique<TripEngine>(argv[4]); }
 #pragma omp taskwait
 
       // read full day
-      size_t max_row_count = 1000000
-          // std::numeric_limits<size_t>::max()
+      size_t max_row_count = argc == 5 ?
+          std::numeric_limits<size_t>::max() : std::stoull(argv[5]);
           ;
       std::tm temp{}, current{};
       std::stringstream ss;

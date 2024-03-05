@@ -62,8 +62,6 @@ if __name__ == "__main__":
                 print("year {} is not in data list".format(year))
         except ValueError:
             print("int argument, not {}".format(year))
-    # print(sys.argv)
-    # print("There are {} CPUs on this machine ".format(cpu_count()))
     pool = Pool(min(cpu_count(), len(arg)))
     results = pool.map(download, arg)
     pool.close()

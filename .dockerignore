@@ -1,0 +1,7 @@
+data
+cmake-build-debug
+.ipynb_checkpoints
+.idea
+.clang-format
+inp.txt
+out.txt

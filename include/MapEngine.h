@@ -20,11 +20,11 @@ struct MapEngine {
     RoutingKit::SimpleOSMCarRoutingGraph graph;
     RoutingKit::GeoPositionToNode map_geo_position;
     MapEngine(const std::string &census_file, const std::string &community_area_file, const std::string &osm_file) {
-#pragma omp parallel default(shared)
+#pragma omp parallel shared(census_file,community_area_file,osm_file) default(none)
       {
 #pragma omp single
         {
-#pragma omp task
+#pragma omp task shared(census_file,community_area_file) default(none)
           {
             OGRRegisterAll();
             auto census_shapes = std::unique_ptr<GDALDataset, GDALDatasetDeleter>(
@@ -60,17 +60,17 @@ struct MapEngine {
             for (auto &[_, region, envelope] : community_areas)
               region->getEnvelope(&envelope);
           }
-#pragma omp task shared(graph, ch, map_geo_position, osm_file) default(none)
+#pragma omp task  default(none) shared(osm_file)
           {
             // TODO: add logging
             graph = RoutingKit::simple_load_osm_car_routing_graph_from_pbf(osm_file);
-#pragma omp task shared(ch, graph) default(none)
+#pragma omp task default(none)
             {
               // Build the shortest path index
               ch = RoutingKit::ContractionHierarchy::build(
                   graph.node_count(), RoutingKit::invert_inverse_vector(graph.first_out), graph.head, graph.travel_time);
             }
-#pragma omp task shared(graph, map_geo_position) default(none)
+#pragma omp task default(none)
             {
               // Build the index to quickly map latitudes and longitudes
               map_geo_position = RoutingKit::GeoPositionToNode(graph.latitude, graph.longitude);
