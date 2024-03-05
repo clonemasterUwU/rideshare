@@ -792,7 +792,7 @@ OSMRoutingGraph load_osm_routing_graph_from_pbf(
 			}
 
 			auto p = compute_inverse_sort_permutation_first_by_tail_then_by_head_and_apply_sort_to_tail(arc_count, forbidden_from, forbidden_to);
-			forbidden_to = apply_inverse_permutation(p, move(forbidden_to));
+			forbidden_to = apply_inverse_permutation(p, std::move(forbidden_to));
 
 			assert(is_sorted_using_less(forbidden_from));
 

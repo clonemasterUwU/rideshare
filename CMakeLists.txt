@@ -30,7 +30,7 @@ add_executable(model_gen_mk2 main.cpp
         src/TripEngine.cpp
 )
 if (APPLE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xclang -fopenmp  -I/opt/homebrew/opt/libomp/include")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xclang -fopenmp -L/opt/homebrew/opt/libomp/lib -I/opt/homebrew/opt/libomp/include -lomp")
 else ()
     find_package(OpenMP REQUIRED)
     target_link_libraries(model_gen_mk2 PRIVATE OpenMP::OpenMP_CXX)

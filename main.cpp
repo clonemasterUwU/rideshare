@@ -4,19 +4,19 @@
 #include "TripEngine.h"
 int main(int argc,char ** argv) {
   if(argc < 5) return -1;
-#pragma omp parallel default(none)
+#pragma omp parallel shared(argc,argv) default(none)
   {
 #pragma omp single
     {
       std::unique_ptr<MapEngine> me{};
       std::unique_ptr<TripEngine> te{};
-#pragma omp task shared(me) default(none)
+#pragma omp task shared(me,argv) default(none)
       {
         me = std::make_unique<MapEngine>(argv[1],
                                          argv[2],
                                          argv[3]);
       }
-#pragma omp task shared(te) default(none)
+#pragma omp task shared(te,argv) default(none)
       { te = std::make_unique<TripEngine>(argv[4]); }
 #pragma omp taskwait
 
