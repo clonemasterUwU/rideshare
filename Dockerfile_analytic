@@ -4,9 +4,10 @@ LABEL authors="clonemasteruwu"
 RUN apt-get update && \
     apt-get install -y cmake libgdal-dev && \
     rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 COPY . /app
-#RUN mkdir build && \
-#    cd build && \
-#    cmake .. && \
-#    cmake --build . --target all
+RUN mkdir build && \
+    cd build && \
+    cmake .. && \
+    cmake --build . --target analytic -j 6

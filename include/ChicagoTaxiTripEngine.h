@@ -1,28 +1,30 @@
 #ifndef INCLUDE_TRIPENGINE_H_
 #define INCLUDE_TRIPENGINE_H_
+#include <ogr_api.h>
+#include <ogrsf_frmts.h>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <random>
 #include <sstream>
 #include <string>
-#include <string_view>
 #include <optional>
 #include "MapEngine.h"
 #include "csv.h"
 #include "utils.h"
-struct Trip {
-    uint32_t tick, len;
-    int64_t begin_census_or_ca, end_census_or_ca;
-    float begin_x, end_x, begin_y, end_y;
-    unsigned begin_node, end_node;
-    Trip(uint32_t tick, int64_t begin_census_or_ca, int64_t end_census_or_ca);
+
+struct OGRGeometryDeleter {
+    void operator()(OGRGeometry *p) const { OGRGeometryFactory::destroyGeometry(p); }
+};
+struct GDALDatasetDeleter {
+    void operator()(GDALDataset *p) const { GDALClose(p); }
 };
 using csv_stream = io::CSVReader<5, io::trim_chars<' ', '\t'>, io::double_quote_escape<',', '"'>>;
 constexpr unsigned max_dist = 50;
-struct TripEngine {
+struct ChicagoTaxiTrip {
     csv_stream inp;
-    TripEngine(const std::string &csv_file) : inp(csv_file) {
+    std::vector<std::tuple<int64_t, std::unique_ptr<OGRGeometry, OGRGeometryDeleter>, OGREnvelope>> census_tracts, community_areas;
+    ChicagoTaxiTrip(const std::string &csv_file) : inp(csv_file) {
       inp.read_header(
           io::ignore_extra_column, "Trip Start Timestamp", "Pickup Census Tract", "Dropoff Census Tract", "Pickup Community Area", "Dropoff Community Area");
     }
@@ -35,7 +37,7 @@ struct TripEngine {
      * @param max_iter the number of tries to generate pair of locations that are both close to some node in the map and reachable from each other
      */
     static void generate_data(std::vector<Trip> &data, const MapEngine &me, RoutingKit::ContractionHierarchyQuery &ch_query, size_t max_iter = 10) {
-      std::mt19937 rd(10082001);
+      std::mt19937 rd(8102001);
       std::cout << data.size() << "\n";
       //remove data with no pickup/dropoff region
       auto remove_ptr = std::remove_if(
