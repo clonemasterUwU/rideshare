@@ -1,7 +1,10 @@
-#ifndef MODEL_GEN_MK2_INCLUDE_UTILS_H_
-#define MODEL_GEN_MK2_INCLUDE_UTILS_H_
+#ifndef UTILS_H_
+#define UTILS_H_
 #include <charconv>
-#include <exception>
+#include <stdexcept>
+#include <iostream>
+#include "routingkit/constants.h"
+#include "spdlog/spdlog.h"
 
 #ifdef NDEBUG
 #define ASSERT(condition) ((void)0)
@@ -28,4 +31,20 @@ void from_chars_throws(const char *first,
     throw std::out_of_range{"out_of_range"};
   }
 }
-#endif //MODEL_GEN_MK2_INCLUDE_UTILS_H_
+
+template <typename T>
+auto report_and_exit(const T &message) {
+    std::cerr << message << std::endl;
+    std::terminate();
+}
+
+template <typename T, typename... Args>
+auto report_and_exit(const T &message, Args&&... args) {
+    std::cerr << message;
+    report_and_exit(std::forward<Args>(args)...);
+}
+
+using node_t = decltype(RoutingKit::invalid_id);
+using travel_time_t = decltype(RoutingKit::inf_weight);
+using travel_dist_t = decltype(RoutingKit::inf_weight);
+#endif //UTILS_H_

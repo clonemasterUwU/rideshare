@@ -1,14 +1,17 @@
-FROM gcc:13.2-bookworm
-LABEL authors="clonemasteruwu"
+FROM gcc:13-bookworm as builder
 
-RUN apt-get update && \
-    apt-get install -y cmake libboost-context-dev && \
+RUN apt update && \
+    apt install -y  cmake libasio-dev libspdlog-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN curl https://raw.githubusercontent.com/matt-42/lithium/master/install.sh | bash -s - /usr/local
 
 WORKDIR /app
 COPY . /app
-RUN mkdir build && \
-    cd build && \
-    cmake .. && \
-    cmake --build . --target server -j 6
+RUN cmake -S . -B build && \
+    cmake --build build --target server -j 6
+
+#FROM debian:bookworm-slim as runtime
+#WORKDIR /app
+#COPY --from=builder /app/build/server .
+#CMD ["./server"]
+
+

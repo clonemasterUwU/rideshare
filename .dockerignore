@@ -2,7 +2,5 @@ data
 cmake-build-debug
 .ipynb_checkpoints
 .idea
-.clang-format
-.DS_Store
-inp.txt
-out.txt
+
+

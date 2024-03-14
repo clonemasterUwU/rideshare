@@ -1,6 +1,5 @@
 import argparse
 import csv
-import datetime
 import os
 import requests
 import tempfile
@@ -10,12 +9,16 @@ from datetime import datetime
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
 
+use_ram = False
+
 
 def download(parameters):
     directory, file_name, extension, url = parameters
-    os.makedirs(directory, exist_ok=True)
     try:
-        with open(file_name, 'wb') if extension == 'osm' else tempfile.TemporaryFile() as temp_file:
+        os.makedirs(directory, exist_ok=True)
+        with (open(file_name, 'wb') if extension == 'osm'
+                else tempfile.SpooledTemporaryFile() if use_ram
+                else tempfile.TemporaryFile() as temp_file):
             with requests.get(url, stream=True) as r:
                 r.raise_for_status()
                 for chunk in r.iter_content(chunk_size=16392):
@@ -44,13 +47,10 @@ if __name__ == "__main__":
     parser.add_argument("--dir", required=True, help="Data directory")
     parser.add_argument("--years", nargs="*", type=int, help="List of years to pull csv data",
                         choices=range(2013, 2024))
+    parser.add_argument("--use-ram", action=argparse.BooleanOptionalAction, default=False)
     args = parser.parse_args()
-    print(args)
+    use_ram = args.use_ram
     data_dir = Path(args.dir)
-    if not os.path.exists(data_dir):
-        print("{} does not exist or permission is not granted. Try to create directory...".format(data_dir))
-        os.makedirs(data_dir)
-        print("directory created!")
 
     maps = {2013: "6h2x-drp2", 2014: "66as-63gf", 2015: "9arg-bn2i", 2016: "bk5j-9eu2", 2017: "jeij-fq8w",
             2018: "vbsw-zws8", 2019: "h4cq-z3dy", 2020: "r2u4-wwk3", 2021: "9kgb-ykyt", 2022: "npd7-ywjz",
@@ -67,7 +67,8 @@ if __name__ == "__main__":
                           "https://data.cityofchicago.org/api/views/{}/rows.csv?accessType=DOWNLOAD&api_foundry=true"
                           .format(maps[int(year)])))
     arguments = list(filter(lambda x: not os.path.exists(x[0] / x[1]), arguments))
-    print(arguments)
+    if not arguments:
+        exit(0)
     pool = Pool(min(cpu_count(), len(arguments)))
     results = pool.map(download, arguments)
     pool.close()

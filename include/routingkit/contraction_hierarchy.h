@@ -11,7 +11,7 @@
 #include <functional>
 #include <cassert>
 #include <type_traits>
-#include <limits.h>
+#include <climits>
 
 namespace RoutingKit{
 

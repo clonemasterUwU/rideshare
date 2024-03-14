@@ -1,5 +1,5 @@
-#ifndef MODEL_GEN_MK2_INCLUDE_MAXIMUMWEIGHTEDMATCHING_H_
-#define MODEL_GEN_MK2_INCLUDE_MAXIMUMWEIGHTEDMATCHING_H_
+#ifndef MAXIMUMWEIGHTEDMATCHING_H_
+#define MAXIMUMWEIGHTEDMATCHING_H_
 /**
  * src: https://github.com/yosupo06/library-checker-problems/blob/master/graph/general_weighted_matching/sol/correct.cpp
  */
@@ -1010,4 +1010,4 @@ class MaximumWeightedMatching {
     ModifiableHeap<cost_t> heap4;
 };
 
-#endif // MODEL_GEN_MK2_INCLUDE_MAXIMUMWEIGHTEDMATCHING_H_
+#endif // MAXIMUMWEIGHTEDMATCHING_H_
