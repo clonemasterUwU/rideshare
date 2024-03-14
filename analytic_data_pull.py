@@ -16,7 +16,7 @@ def download(parameters):
     directory, file_name, extension, url = parameters
     try:
         os.makedirs(directory, exist_ok=True)
-        with (open(file_name, 'wb') if extension == 'osm'
+        with (open(directory/file_name, 'wb') if extension == 'osm'
                 else tempfile.SpooledTemporaryFile() if use_ram
                 else tempfile.TemporaryFile() as temp_file):
             with requests.get(url, stream=True) as r:
