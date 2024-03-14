@@ -56,7 +56,7 @@ if __name__ == "__main__":
             2018: "vbsw-zws8", 2019: "h4cq-z3dy", 2020: "r2u4-wwk3", 2021: "9kgb-ykyt", 2022: "npd7-ywjz",
             2023: "e55j-2ewb"}
     # # urls = ["https://data.cityofchicago.org/api/views/{}/rows.csv?accessType=DOWNLOAD&api_foundry=true".format(x)]
-    arguments = [(data_dir / "osm", "Chicago.osm.pbf", "pbf",
+    arguments = [(data_dir / "osm", "Chicago.osm.pbf", "osm",
                   "https://download.bbbike.org/osm/bbbike/Chicago/Chicago.osm.pbf"),
                  (data_dir, "community_area", "zip",
                   "https://data.cityofchicago.org/api/geospatial/cauq-8yn6?method=export&format=Shapefile"),
