@@ -2,5 +2,6 @@ data
 cmake-build-debug
 .ipynb_checkpoints
 .idea
+*pem
 
 

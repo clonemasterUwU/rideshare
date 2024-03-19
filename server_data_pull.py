@@ -33,7 +33,6 @@ if __name__ == "__main__":
         "Eugene",
         "FortCollins",
         "Huntsville",
-        "LosAngeles",
         "Madison",
         "Miami",
         "NewOrleans",

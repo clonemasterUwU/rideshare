@@ -69,7 +69,7 @@ bool is_osm_way_used_by_pedestrians(uint64_t osm_way_id, const TagMap&tags, std:
 	if(junction != nullptr)
 		return true;
 
-	const char* route = tags["route"];
+	const char* route = tags["endpoint"];
 	if(route && str_eq(route, "ferry"))
 		return true;
 
@@ -176,7 +176,7 @@ bool is_osm_way_used_by_cars(uint64_t osm_way_id, const TagMap&tags, std::functi
 	if(junction != nullptr)
 		return true;
 
-	const char* route = tags["route"];
+	const char* route = tags["endpoint"];
 	if(route && str_eq(route, "ferry"))
 		return true;
 
@@ -429,7 +429,7 @@ unsigned get_osm_way_speed(uint64_t osm_way_id, const TagMap&tags, std::function
 	}
 
 	// TODO: a ferry may have a duration tag
-	auto route = tags["route"];
+	auto route = tags["endpoint"];
 	if(route && str_eq(route, "ferry")) {
 		return 5;
 	}
@@ -472,7 +472,7 @@ bool is_osm_way_used_by_bicycles(uint64_t osm_way_id, const TagMap&tags, std::fu
 	if(junction != nullptr)
 		return true;
 
-	const char* route = tags["route"];
+	const char* route = tags["endpoint"];
 	if(route != nullptr && str_eq(route, "ferry"))
 		return true;
 

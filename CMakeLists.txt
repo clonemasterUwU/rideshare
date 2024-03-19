@@ -56,9 +56,9 @@ add_executable(server
         src/routingkit/vector_io.cpp
 )
 
-
-target_compile_options(analytic PRIVATE -g -fsanitize=address -fsanitize=undefined -O2)
-target_link_options(analytic PRIVATE -g -fsanitize=address -fsanitize=undefined)
+target_compile_options(analytic PRIVATE -g -O2)
+#target_compile_options(analytic PRIVATE -g -fsanitize=address -fsanitize=undefined -O2)
+#target_link_options(analytic PRIVATE -g -fsanitize=address -fsanitize=undefined)
 
 target_link_options(server PRIVATE -g -fsanitize=address -fsanitize=undefined -O2)
 target_link_options(server PRIVATE -g -fsanitize=address -fsanitize=undefined)
@@ -67,9 +67,10 @@ target_link_options(server PRIVATE -g -fsanitize=address -fsanitize=undefined)
 if (APPLE AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xclang -fopenmp -L/opt/homebrew/opt/libomp/lib -I/opt/homebrew/opt/libomp/include -lomp")
 else ()
-    find_package(OpenMP REQUIRED)
-    target_link_libraries(analytic PRIVATE OpenMP::OpenMP_CXX)
-    target_link_libraries(server PRIVATE OpenMP::OpenMP_CXX)
+    find_package(OpenMP)
+    if (OpenMP_FOUND)
+        target_link_libraries(analytic PRIVATE OpenMP::OpenMP_CXX)
+    endif ()
 endif ()
 
 if (GDAL_FOUND)
@@ -90,12 +91,11 @@ if (OpenSSL_FOUND)
     target_link_libraries(server PRIVATE OpenSSL::SSL)
 endif ()
 
-find_package(Boost COMPONENTS program_options)
+find_package(Boost COMPONENTS program_options system )
 if (Boost_FOUND)
-    target_link_libraries(analytic PRIVATE Boost::program_options)
-    target_link_libraries(server PRIVATE Boost::program_options)
+    target_link_libraries(server PRIVATE Boost::system Boost::program_options)
+    target_link_libraries(analytic PUBLIC Boost::program_options)
 endif ()
-
 
 
 find_package(spdlog)
@@ -114,7 +114,8 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(glaze)
-
-target_link_libraries(server PRIVATE glaze::glaze)
 target_link_libraries(analytic PRIVATE glaze::glaze)
+target_link_libraries(server PRIVATE glaze::glaze)
+
+
 

@@ -1,9 +1,9 @@
 #include "MatchingEngine.h"
 
-std::vector<std::tuple<uint32_t, uint32_t, unsigned, Match>> MatchingEngine::offline_optimal_matching(const std::span<Trip> window,
-                                                                                                      const MapEngine &map_engine,
-                                                                                                      RoutingKit::ContractionHierarchyQuery &time_query,
-                                                                                                      float delta) {
+std::vector<std::tuple<uint32_t, uint32_t, int64_t, Match>> MatchingEngine::offline_optimal_matching(const std::span<Trip> window,
+                                                                                                     const MapEngine &map_engine,
+                                                                                                     RoutingKit::ContractionHierarchyQuery &time_query,
+                                                                                                     float delta) {
     size_t n = window.size();
     // log before create graph
 //      if (log_message) {
@@ -93,11 +93,15 @@ std::vector<std::tuple<uint32_t, uint32_t, unsigned, Match>> MatchingEngine::off
 //          }
 //          ASSERT(p == matches.size());
 //      }
-    std::vector<std::tuple<uint32_t, uint32_t, unsigned, Match>> results;
+    std::vector<std::tuple<uint32_t, uint32_t, int64_t, Match>> results;
     results.reserve(edges.size());
+    size_t r = matches.size(), l = 0;
     for (auto [i, j, w] : edges) {
+        bool is_match = l < r && matches[l].first == i && matches[l].second == j;
         --i, --j;
-        results.emplace_back(window[i].id, window[j].id, w, types[i][j]);
+
+        results.emplace_back(window[i].id, window[j].id, is_match ? w : -w, types[i][j]);
+        l += is_match;
     }
     return {results};
     // out << max_saved << " " << matches.size() << "\n";

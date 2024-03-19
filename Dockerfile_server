@@ -1,13 +1,15 @@
-FROM gcc:13-bookworm as builder
+FROM debian:trixie-slim as builder
 
-RUN apt update && \
-    apt install -y  cmake libasio-dev libspdlog-dev && \
+RUN apt update -y && \
+    apt install -y git lsb-release software-properties-common gnupg wget libomp5 cmake zlib1g-dev libboost-dev libspdlog-dev libboost-system-dev libboost-program-options-dev libssl-dev && \
     rm -rf /var/lib/apt/lists/*
+
+RUN wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && ./llvm.sh 17
 
 WORKDIR /app
 COPY . /app
-RUN cmake -S . -B build && \
-    cmake --build build --target server -j 6
+RUN CC=/usr/bin/clang-17 CXX=/usr/bin/clang++-17 cmake -S . -B build && \
+    CC=/usr/bin/clang-17 CXX=/usr/bin/clang++-17 cmake --build build --target server -j 6
 
 #FROM debian:bookworm-slim as runtime
 #WORKDIR /app

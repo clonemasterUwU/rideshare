@@ -3,16 +3,19 @@
 #include <iostream>
 #include <iomanip>
 #include <boost/program_options.hpp>
+#include <string>
 #include <omp.h>
 #include <glaze/glaze.hpp>
 #include "ChicagoTaxiTripEngine.h"
 #include "MapEngine.h"
 #include "MatchingEngine.h"
 #include "utils.h"
+struct MatchResult {
+  uint32_t tick;
+  std::vector<std::array<float, 4>> trips;
+  std::vector<std::tuple<uint32_t, uint32_t, int64_t, Match>> matches;
+};
 int main(int argc, char *argv[]) {
-    //  MapEngine map_engine("../data/Chicago.osm.pbf");
-    //  MatchingEngine matching_engine(&map_engine);
-    //  MapEngine *map_engine
     namespace po = boost::program_options;
     namespace fs = std::filesystem;
     fs::path directory;
@@ -119,7 +122,11 @@ int main(int argc, char *argv[]) {
                             size_t j = i + 1;
                             while (j < n && generated_data[j].tick == generated_data[i].tick)
                                 j++;
-                            day_result.push_back({generated_data[i].tick,
+                            std::vector<std::array<float, 4>> trips;
+                            trips.reserve(j - i);
+                            for (size_t t = i; t < j; t++)
+                                trips.push_back({{generated_data[t].begin_x, generated_data[t].begin_y, generated_data[t].end_x, generated_data[t].end_y}});
+                            day_result.push_back({generated_data[i].tick, std::move(trips),
                                                   MatchingEngine::offline_optimal_matching(std::span<Trip>(generated_data.begin() + i,
                                                                                                            generated_data.begin() + j),
                                                                                            map_engine,

@@ -113,11 +113,10 @@ inline double geo_dist(double lat_a, double lon_a, double lat_b, double lon_b){
 	for(unsigned i=0; i<4; ++i)
 		vec[i] = cos(vec[i]*pi_div_180);
 
-	double len = (vec[0] + vec[1]) * vec[2] + vec[0] - vec[1];
+	double len = std::clamp((vec[0] + vec[1]) * vec[2] + vec[0] - vec[1],-2.0,2.0);
 	len *= 0.5;
 	len  = acos(len);
 	len *= earth_radius;
-
 	// len is in meter
 
 	return len;

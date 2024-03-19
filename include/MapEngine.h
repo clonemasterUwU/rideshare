@@ -1,7 +1,6 @@
 #ifndef INCLUDE_MAPENGINE_H_
 #define INCLUDE_MAPENGINE_H_
 #include <string>
-#include <omp.h>
 #include "routingkit/contraction_hierarchy.h"
 #include "routingkit/geo_position_to_node.h"
 #include "routingkit/inverse_vector.h"
